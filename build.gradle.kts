@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "cc.dreamcode"
-version = "1.0.1"
+version = "1.0.0"
 val mainPackage = "cc.dreamcode.guildpoints"
 
 repositories {
