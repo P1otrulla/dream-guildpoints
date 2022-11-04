@@ -74,7 +74,7 @@ tasks {
 }
 
 tasks.withType<ShadowJar> {
-    archiveFileName.set("dreamGuildPoints v${project.version}.jar")
+    archiveFileName.set("dreamGuildPoints_${project.version}_1.8-1.19.jar")
 
     exclude(
         "panda/std/**",
