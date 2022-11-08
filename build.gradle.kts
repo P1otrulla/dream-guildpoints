@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "cc.dreamcode"
-version = "1.0.0"
+version = "1.0.1"
 val mainPackage = "cc.dreamcode.guildpoints"
 
 repositories {
@@ -21,6 +21,7 @@ repositories {
     maven { url = uri("https://papermc.io/repo/repository/maven-public/")}
     maven { url = uri("https://repo.panda-lang.org/releases") }
     maven { url = uri("https://repo.eternalcode.pl/releases") }
+    maven { url = uri("https://repo.dreamcode.cc/releases") }
     maven { url = uri("https://maven.enginehub.org/repo") }
 }
 
@@ -28,20 +29,21 @@ dependencies {
     // Engine
     compileOnly("org.spigotmc:spigot-api:1.19-R0.1-SNAPSHOT")
 
-    // Adventure
-    implementation("net.kyori:adventure-platform-bukkit:4.1.2")
-    implementation("net.kyori:adventure-text-minimessage:4.11.0")
+    // Okaeri Configs
+    implementation("eu.okaeri:okaeri-configs-yaml-bukkit:4.0.6")
+    implementation("eu.okaeri:okaeri-configs-serdes-bukkit:4.0.6")
+    implementation("eu.okaeri:okaeri-configs-serdes-commons:4.0.6")
 
-    // Cdn
-    implementation("net.dzikoysk:cdn:1.14.1")
+    // dreamNotice
+    implementation("cc.dreamcode.notice:core:1.0.4")
+    implementation("cc.dreamcode.notice:bukkit:1.0.4")
+    implementation("cc.dreamcode.notice:bukkit-okaeri-serdes:1.0.4")
 
     // bStats
     implementation("org.bstats:bstats-bukkit:3.0.0")
 
     // FunnyGuilds
     compileOnly("net.dzikoysk.funnyguilds:plugin:4.10.2")
-    compileOnly("eu.okaeri:okaeri-configs-yaml-bukkit:4.0.6")
-    compileOnly("eu.okaeri:okaeri-configs-serdes-commons:4.0.6")
 }
 
 tasks.withType<JavaCompile> {
@@ -55,6 +57,7 @@ bukkit {
     author = "Piotrulla"
     name = "dreamGuildPoints"
     version = "${project.version}"
+    description = "DreamCode.cc - https://discord.gg/dreamcode"
     depend = listOf("FunnyGuilds")
 }
 
@@ -74,7 +77,7 @@ tasks {
 }
 
 tasks.withType<ShadowJar> {
-    archiveFileName.set("dreamGuildPoints_${project.version}_1.8-1.19.jar")
+    archiveFileName.set("dreamGuildPoints-${project.version}_1.8-1.19.jar")
 
     exclude(
         "panda/std/**",
@@ -92,8 +95,10 @@ tasks.withType<ShadowJar> {
 
     listOf(
         "org.bstats",
-        "net.dzikoysk.cdn",
+        "eu.okaeri",
         "net.kyori",
+        "cc.dreamcode.notice",
+        "org.bstats"
     ).forEach { pack ->
         relocate(pack, "$prefix.$pack")
     }

@@ -1,28 +1,24 @@
 package cc.dreamcode.guildpoints;
 
 import cc.dreamcode.guildpoints.config.PluginConfig;
-import cc.dreamcode.guildpoints.notice.NoticeService;
+import com.google.common.collect.ImmutableMap;
 import net.dzikoysk.funnyguilds.config.PluginConfiguration;
 import net.dzikoysk.funnyguilds.rank.RankSystem;
 import net.dzikoysk.funnyguilds.user.User;
 import net.dzikoysk.funnyguilds.user.UserManager;
 import org.bukkit.entity.Player;
-
-import java.util.List;
-import java.util.stream.Collectors;
+import panda.std.Option;
 
 public class GuildPointsService {
 
     private final PluginConfiguration fgConfig;
-    private final NoticeService noticeService;
     private final UserManager userManager;
     private final PluginConfig config;
     private RankSystem rankSystem;
 
-    public GuildPointsService(PluginConfiguration fgConfig, NoticeService noticeService, UserManager userManager, PluginConfig config) {
+    public GuildPointsService(PluginConfiguration fgConfig, UserManager userManager, PluginConfig config) {
         this.fgConfig = fgConfig;
         this.userManager = userManager;
-        this.noticeService = noticeService;
         this.config = config;
     }
 
@@ -31,17 +27,21 @@ public class GuildPointsService {
             this.rankSystem = this.initialize();
         }
 
-        if (this.userManager.findByPlayer(player).isEmpty()) {
+        Option<User> userOption = this.userManager.findByPlayer(player);
+
+        if (userOption.isEmpty()) {
             return;
         }
 
-        User user = this.userManager.findByPlayer(player).get();
+        User user = userOption.get();
 
-        if (this.userManager.findByPlayer(target).isEmpty()) {
+        Option<User> targetOption = this.userManager.findByPlayer(target);
+
+        if (targetOption.isEmpty()) {
             return;
         }
 
-        User targetUser = this.userManager.findByPlayer(target).get();
+        User targetUser = targetOption.get();
 
         RankSystem.RankResult rankResultAdd = this.rankSystem.calculate(this.fgConfig.rankSystem, user.getRank().getPoints(), targetUser.getRank().getPoints());
 
@@ -51,10 +51,10 @@ public class GuildPointsService {
 
         int pointsRemove = rankResultRemove.getVictimPoints();
 
-        this.config.message.stream()
-                .map(line -> line.replace("{KILL-POINTS}", String.valueOf(pointsAdd)).replace("{DEATH-POINTS}", String.valueOf(pointsRemove)))
-                .collect(Collectors.toList())
-                .forEach(line -> this.noticeService.sendMessage(player.getUniqueId(), line));
+        this.config.message.forEach(notice -> notice.send(player, ImmutableMap.of(
+                "KILL-POINTS", String.valueOf(pointsAdd),
+                "DEATH-POINTS", String.valueOf(pointsRemove)
+        )));
     }
 
     private RankSystem initialize() {

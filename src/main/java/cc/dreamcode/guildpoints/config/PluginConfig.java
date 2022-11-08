@@ -1,30 +1,25 @@
 package cc.dreamcode.guildpoints.config;
 
-import net.dzikoysk.cdn.entity.Description;
-import net.dzikoysk.cdn.source.Resource;
-import net.dzikoysk.cdn.source.Source;
+import cc.dreamcode.notice.NoticeType;
+import cc.dreamcode.notice.bukkit.BukkitNotice;
+import eu.okaeri.configs.OkaeriConfig;
+import eu.okaeri.configs.annotation.Comment;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
-public class PluginConfig implements ReloadableConfig {
+public class PluginConfig extends OkaeriConfig {
 
-    @Description({
+    @Comment({
             "## dreamGuildPoints (Main-Config) ##",
             "",
             "# Wiadomość przy kliknięciu"
     })
-    public List<String> message = Arrays.asList(
-            "&7Zabijając tego gracza otrzymasz: &a{KILL-POINTS} &7pkt.",
-            "&7Ginąc przez tego gracza stracisz: &c{DEATH-POINTS} &7pkt."
+    public List<BukkitNotice> message = Arrays.asList(
+            new BukkitNotice(NoticeType.CHAT, "&7Zabijając tego gracza otrzymasz: &a{KILL-POINTS} &7pkt."),
+            new BukkitNotice(NoticeType.CHAT, "&7Ginąc przez tego gracza stracisz: &c{DEATH-POINTS} &7pkt.")
     );
 
-    @Description({ "", "# Cooldown pomiedzy kliknieciem (w sekundach)" })
+    @Comment({ "", "# Cooldown pomiedzy kliknieciem (w sekundach)" })
     public int cooldown = 5;
-
-    @Override
-    public Resource resource(File folder) {
-        return Source.of(folder, "config.yml");
-    }
 }
